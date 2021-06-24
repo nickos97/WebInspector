@@ -1,2 +1,2 @@
 # WebInspector
-Web application
+Web node application
