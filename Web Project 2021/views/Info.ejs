@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Web Inspector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>  
+</head>
+<style>
+
+    .nav-form {
+        background-color: #4d4d4d;
+        color:cornsilk;
+        padding: 30px 60px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .nav-form h4 {
+    text-align: center;
+    color: #4d4d4d;
+    font-size: 30px;
+    padding: 20px 0 20px 0;
+    }
+    .nav-form ul {
+        display:flex;
+        justify-content:center;
+        align-items:center;
+    }
+    .nav-form li {
+        list-style: none;
+        float:left;
+        padding:10px;
+    }
+    .nav-form li a {
+        color:cornsilk;
+        text-decoration:none;
+        font-weight:bold;
+        padding:5px 8px;
+        }
+    .nav-form li a:hover {
+        color: yellow; 
+        
+    }
+    .lead {
+        color:rgb(0, 0, 0);
+        font-weight:bold;
+    }
+    .info-form {
+        width: 300px;
+        font-family: Tahoma, Geneva, sans-serif;
+        text-align:center;
+        
+        }
+    .info-form h2 {
+        text-align: center;
+        color: #4d4d4d;
+        font-size: 25px;
+        padding: 20px 0 20px 0;
+        }
+    .info-form button {
+        color:rgb(31, 29, 28);
+        width: 100px;
+    }
+    h3 {
+        text-align: center;
+        margin-top: -30px;
+    }
+
+    table th, td {
+       border: 1px solid rgb(19, 18, 18);
+       
+    }
+    table {
+        border-collapse: collapse;
+        width: 60%;
+        margin:20px;
+        float:left
+    }
+    table td,th {
+        padding: 15px;
+    }
+    table td {
+        text-align: center;
+    }
+    table th {
+        background-color: #4d4d4d;
+        color:#ddd
+    }
+</style>
+<body>
+    <div class="nav-form">
+        <nav>
+          <h4 style=color:white>Web Inspector</h4>
+          <ul>
+              <li><a href="/Owner">Home</a></li>
+              <li><a href="/updateacc">Account</a></li>
+              <li><a>About us</a></li>
+              <li><a href="/Owner" >Back</a></li>
+              
+          </ul>
+        </nav>
+      </div>
+
+        <table>
+           <tr>
+                <th>Users</th>
+                <%for(var i in userData1) {%>
+                <th><%=userData1[i].method%></th>
+                <% } %>
+                <th>Unique Domains</th>
+                <th>Unique ISPs</th>
+                
+            </tr> 
+           
+            
+            <tr>
+                <td><%=userData%></td>
+                <%for(var i in userData1) {%>
+                <td><%=userData1[i].count %></td>
+                <% } %>
+                <td><%=userData3%></td>
+                <td><%=userData4%></td>
+                
+
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <%for(var i in userData2) {%>
+                    <th>Status:<%=userData2[i].status%></th>
+                <% } %>
+            </tr>
+            <tr>
+                <%for(var i in userData2) {%>
+                    <td><%=userData2[i].count%></td>
+                <% } %>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <%for(var i in ctypes) {%>
+                    <th><%=userData6[i]%></th>
+                <% } %>
+            </tr>
+            <tr>
+                <%for(var i in avg) {%>
+                    <td> Average age: <%=userData5[i]%></td>
+                <% } %>
+            </tr>
+        </table>
+    
+</body>
+</html>

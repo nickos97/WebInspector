@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Inspector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/heatmapjs@2.0.2/heatmap.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-heatmap@1.0.0/leaflet-heatmap.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"/>
+    
+    
+    <style>
+
+        img.huechange { filter: hue-rotate(130deg); }
+
+            .nav-form {
+                background-color: #4d4d4d;
+                color:cornsilk;
+                padding: 30px 60px;
+                display: flex;
+                justify-content: space-between;
+            }
+            .nav-form h4 {
+			text-align: center;
+			color: #4d4d4d;
+			font-size: 30px;
+            padding: 20px 0 20px 0;
+            }
+            .nav-form ul {
+                display:flex;
+                justify-content:center;
+                align-items:center;
+            }
+            .nav-form li {
+                list-style: none;
+                float:left;
+                padding:10px;
+            }
+            .nav-form li a {
+                color:cornsilk;
+                text-decoration:none;
+                font-weight:bold;
+                padding:5px 8px;
+                }
+            .nav-form li a:hover {
+                color: yellow; 
+                
+            }
+            .lead {
+                color:rgb(0, 0, 0);
+                font-weight:bold;
+            }
+            .info-form {
+                width: 300px;
+                font-family: Tahoma, Geneva, sans-serif;
+                text-align:center;
+                
+                }
+            .info-form h2 {
+			    text-align: center;
+			    color: #4d4d4d;
+			    font-size: 25px;
+                padding: 20px 0 20px 0;
+                }
+            .info-form button {
+                color:rgb(31, 29, 28);
+                width: 100px;
+            }
+            h3 {
+                text-align: center;
+                margin-top: -30px;
+            }
+            
+            
+           
+            
+            
+
+
+        </style>
+</head>
+<body>
+    <div class="nav-form">
+        <nav>
+          <h4 style=color:white>Web Inspector</h4>
+          <ul>
+              <li><a href="/Owner">Home</a></li>
+              <li><a href="/updateacc">Account</a></li>
+              <li><a href="/info">Basic Info</a></li>
+              <li><a href="/chart1">Response time analysis</a></li>
+              <li><a href="/chart2">Http header analysis</a></li>
+              <li><a>About us</a></li>
+              <li><a href="/login" id="signout1">Sign out</a></li>
+              
+          </ul>
+        </nav>
+      </div>
+      <div class="info-form">
+        
+        
+      </div>
+        
+        <div class ="col-md-6 offset-md-3">
+            <div class ="card">
+                <div class="card-body">
+                    <div id="mapid" style="width: 1000px; height: 800px;"></div>
+                </div>
+            </div>
+        </div>    
+      
+      <script>
+        $('#signout1').click(function(){
+          $.post('/home', {signout: true});
+        })
+   </script>
+</body>
+
+<script>
+    var userloc ="<%=loc%>"
+    var marker ="<%=marker%>"
+    var target = "<%=target%>"
+    var str = marker.replace(/&#34;/g,'"')
+    marker=JSON.parse(str)
+    str = target.replace(/&#34;/g,'"')
+    target = JSON.parse(str)
+    console.log(marker.length)
+    console.log(target.length) 
+  //str=getTest.replace(/&#34;/g,'"')
+  console.log(userloc);
+  ldata=JSON.parse(userloc)
+	var mymap = L.map('mapid').setView([38.246242, 21.735085], 5);
+
+
+L.tileLayer('https://{s}.tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=90i7PipB8YABDu6Q1O3kAqLsvnkFj0SLYzVguIxEEakhfUzar4nsrC10C2t1OQNa', {
+	attribution: '<a href="http://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	accessToken: '90i7PipB8YABDu6Q1O3kAqLsvnkFj0SLYzVguIxEEakhfUzar4nsrC10C2t1OQNa'
+}).addTo(mymap)
+
+var greyIcon = new L.Icon({
+    iconUrl: 'marker.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [30, 40],
+    iconAnchor: [15, 40],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  });
+
+for (var i in ldata) {
+   var marker1 = L.marker(ldata[i],{icon: greyIcon}).addTo(mymap);
+}
+
+var myStyle =
+{
+    fillColor: '#96696a',
+    color: '#b0090d',
+    weight: 1   
+};
+
+
+
+for (var i in marker) {
+    for (var j in target) {
+        if(JSON.stringify(marker[i].id)==JSON.stringify(target[j].id)){
+            //console.log(marker[i].long)
+            L.polyline([[marker[i].lat,marker[i].long],[target[j].lat,target[j].long]]).setStyle(myStyle).addTo(mymap);
+        }
+    }
+}
+
+
+//L.polyline([[37.9842,23.7353],[50.1188,8.6843]]).addTo(mymap);
+//L.polyline([[37.9842,23.7353],[50.1188,8.6843]]).addTo(mymap);
+
+
+
+
+
+    /*let testData = {
+max: 8, data: [{lat: 38.246242, lng:
+21.735085, count:5}, {lat: 38.323343, lng:
+21.865082, count:9}, {lat: 38.34381, lng:
+21.57074, count:9}, {lat: 38.108628, lng:
+21.502075, count:9},{lat: 38.123034, lng:
+21.917725, count:9}]};
+let cfg = {"radius": 40,
+"maxOpacity": 0.8,
+"scaleRadius": false,
+"useLocalExtrema": false,
+latField: 'lat',
+lngField: 'lng',
+valueField: 'count'};
+let heatmapLayer = new HeatmapOverlay(cfg);
+mymap.addLayer(heatmapLayer);
+heatmapLayer.setData(testData);*/
+
+</script>
+<script>
+    $('#signout1').click(function(){
+      $.post('/Owner', {signout: true});
+    })
+</script>
+</html>

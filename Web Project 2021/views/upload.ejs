@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Inspector</title>
+    <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"/>
+    
+    <style>
+
+input[type="file"] {
+    position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap; 
+  clip-path: inset(50%);
+  border: 0;
+}
+
+label {
+    border: 1px solid;
+}
+
+label:hover {
+    background-color: grey;
+}
+
+
+label:focus-within {
+    outline: 5px solid;
+}
+   
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display:inline;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #ddd;
+    color:#4d4d4d
+    
+}
+        .upload-form {
+			width: 300px;
+			margin: 1;
+			font-family: Tahoma, Geneva, sans-serif;
+		}
+
+        .upload-form button[type="submit"] {
+			width:100%;
+			height:45px;
+			margin-bottom:15px;
+			border: 1px solid #dddddd;
+            background-color: #4d4d4d;
+            color:#ddd
+		}	
+
+        ul { margin-top:-10px; }
+        li { float:left; padding:10px; }
+        li:last-child { float:right; }
+
+        .nav-form {
+            background-color: #4d4d4d;
+            color:cornsilk;
+            padding: 5px 100px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .nav-form h4 {
+		    text-align: center;
+		    color: #4d4d4d;
+		    font-size: 30px;
+            padding: 20px 0 20px 0;
+        }
+        .nav-form ul {
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+        .nav-form li {
+            list-style: none
+        }
+        .nav-form li a {
+            color:cornsilk;
+            text-decoration:none;
+            font-weight:bold;
+            padding:5px 8px;
+        }
+        .nav-form li a:hover {
+            color: yellow; 
+            text-decoration:none;
+        }
+        .lead {
+            color:rgb(0, 0, 0);
+            font-weight:bold;
+        }
+        </style>
+       
+
+</head>
+<style>
+    #Progress {
+      width: 10%;
+      background-color: #ddd;
+    }
+    
+    #Bar {
+      width: 10%;
+      height: 30px;
+      background-color: #4d4d4d;
+      text-align: center;
+      line-height: 30px;
+      color: cornsilk;
+      position: relative;
+    }
+    </style>
+
+<body>
+   
+    <div class="nav-form">
+        <nav>
+          <h4 style=color:white>Web Inspector</h4>
+          <ul>
+              <li><a href="/home">Home</a></li>
+              
+          </ul>
+        </nav>
+      </div>
+   <br>
+    <div class = "col-md-6 offset-md-5" style = "padding: 30px" >
+        
+            
+  
+   
+    <br>
+<div class="upload-form">
+    <button  type="submit" id='upload' > <i class="fa fa-cloud-upload"></i> <i id="upf">Upload File</i><i hidden id="upingf">Uploading file...</i></button>
+    <button type="submit"  id="save">save</button>
+</div>
+<label class="custom-file-upload">
+    <span id="file-selected"></span>
+    <input type="file" name="infile" id="infile"><i id="cfile">Choose File</i>
+     
+</label>
+<p id="fup" style=color:green>
+    <%if(upsuccess){%>
+        <%upsuccess=false%>
+        <%="File uploaded"%>
+       <%}%>
+    </p>
+<div id="Progress" style = "width:110px; ">
+    <div hidden id="Bar">1%</div>
+</div>
+</div>
+
+<script>
+     $('#infile').bind('change', function() { 
+         var fileName = ''; 
+         fileName = $(this).val(); 
+         $('#file-selected').html(fileName.split("\\")[2]);
+         document.getElementById("cfile").hidden=true
+          })
+</script>
+   
+<script>
+    var i = 0;
+    function move() {
+        if (i == 0) {
+        i = 1;
+        var elem = document.getElementById("Bar");
+        elem.hidden=false
+        var width = 1;
+        var id = setInterval(frame, 25);
+        function frame() {
+        if (width >= 100) {
+            clearInterval(id);
+            i = 0;
+        } 
+        else {
+            width++;
+            elem.style.width = width + "%";
+            elem.innerHTML = width  + "%";
+        }
+        }
+        }
+        }
+</script>
+    
+</body>
+
+
+
+<script>
+    function process(har){
+        entry=[]
+stime=[]
+ip=[]
+wait=[]
+req_method=[]
+url = []
+sstatus = []
+statustext = []
+res_headers=[]
+req_headers=[]
+
+for (var i=0; i<har.log.entries.length; i++) {
+
+    entry[i]=har.log.entries[i]
+    var temp=entry[i].request.url;
+
+    //declare lists for json
+    
+    res_headers[i]=[]
+    req_headers[i]=[]
+
+    //insert values in lists from json
+
+    ip[i]=entry[i].serverIPAddress;
+    stime[i]=entry[i].startedDateTime;
+    wait[i]=entry[i].timings.wait;
+    req_method[i]=entry[i].request.method;
+    url[i] = temp.split('/')[2].split('.')[1] + '.' + temp.split('/')[2].split('.')[2];
+    sstatus[i]=entry[i].response.status;
+    statustext[i]=entry[i].response.statusText;
+    var k1=0;
+
+    for(var j=0; j<entry[i].response.headers.length; j++) {
+
+        /*if(entry[i].response.headers[j].name=="content-type" || entry[i].response.headers[j].name=="cache-control" || entry[i].response.headers[j].name=="pragma" || entry[i].response.headers[j].name=="expires" || entry[i].response.headers[j].name=="age" || entry[i].response.headers[j].name=="last-modified" || entry[i].response.headers[j].name=="host") {
+            res_headers[i][k1]=entry[i].response.headers[j].value;
+            k1++;        
+        }*/
+        if(entry[i].response.headers[j].name.toLowerCase()==="content-type") 
+            res_headers[i][0]=entry[i].response.headers[j].value;
+        
+        else if(entry[i].response.headers[j].name.toLowerCase()==="cache-control")
+            res_headers[i][1]=entry[i].response.headers[j].value;
+        
+        else if(entry[i].response.headers[j].name.toLowerCase()==="pragma")
+            res_headers[i][2]=entry[i].response.headers[j].value;
+       
+
+        else if(entry[i].response.headers[j].name.toLowerCase()==="expires")
+            res_headers[i][3]=entry[i].response.headers[j].value;
+
+
+        else if(entry[i].response.headers[j].name.toLowerCase()==="age")
+            res_headers[i][4]=entry[i].response.headers[j].value;
+ 
+
+        else if(entry[i].response.headers[j].name.toLowerCase()==="last-modified")
+            res_headers[i][5]=entry[i].response.headers[j].value;
+  
+
+        else if(entry[i].response.headers[j].name.toLowerCase()==="host")
+            res_headers[i][6]=entry[i].response.headers[j].value;
+        }
+
+    var k2=0;
+    for(var j=0; j<entry[i].request.headers.length; j++) {
+        
+        /*if(entry[i].request.headers[j].name=="content-type" || entry[i].request.headers[j].name=="cache-control" || entry[i].request.headers[j].name=="pragma" || entry[i].request.headers[j].name=="expires" || entry[i].request.headers[j].name=="age" || entry[i].request.headers[j].name=="last-modified" || entry[i].request.headers[j].name=="host") {
+            req_headers[i][k2]=entry[i].request.headers[j].value;
+            k2++;        
+        }*/
+        if(entry[i].request.headers[j].name=="content-type") 
+            req_headers[i][0]=null;
+        
+        else if(entry[i].request.headers[j].name=="cache-control")
+            req_headers[i][1]=entry[i].response.headers[j].value;
+        
+        else if(entry[i].request.headers[j].name=="pragma")
+            req_headers[i][2]=entry[i].response.headers[j].value;
+       
+        else if(entry[i].request.headers[j].name=="expires")
+            req_headers[i][3]=entry[i].response.headers[j].value;
+
+        else if(entry[i].request.headers[j].name=="age")
+            req_headers[i][4]=entry[i].response.headers[j].value;
+ 
+        else if(entry[i].request.headers[j].name=="last-modified")
+            req_headers[i][5]=entry[i].response.headers[j].value;
+  
+        else if(entry[i].request.headers[j].name=="host")
+            req_headers[i][6]=entry[i].response.headers[j].value;
+        }
+
+    }
+    //console.log(k2 + 'times');
+
+var entry=[]
+//headers=[]
+
+for (i=0; i<har.log.entries.length; i++){
+        entry[i] = {
+                startedDateTime: stime[i],
+                serverIPAddress: ip[i],
+                timings: {
+                    wait: wait[i]
+                },
+                request: {
+                    method: req_method[i],
+                    url: url[i],
+                    headers: [
+                        {
+                            name: "content-type",
+                            value: req_headers[i][0]
+                        },
+                        {
+                            name: "cache-control",
+                            value: req_headers[i][1]
+                        },
+                        {
+                            name: "pragma",
+                            value: req_headers[i][2]
+                        },
+                        {
+                            name: "expires",
+                            value: req_headers[i][3]
+                        },
+                        {
+                            name: "age",
+                            value: req_headers[i][4]
+                        },
+                        {
+                            name: "last-modified",
+                            value: req_headers[i][5]
+                        },
+                        {
+                            name: "host",
+                            value: req_headers[i][6]
+                        } 
+                    ]
+                },
+                response: {
+                    status: sstatus[i],
+                    statusText: statustext[i],
+                    headers: [
+                        {
+                        name: "content-type",
+                        value: res_headers[i][0]
+                        },
+                        {
+                        name: "cache-control",
+                        value: res_headers[i][1]
+                        },
+                        {
+                        name: "pragma",
+                        value: res_headers[i][2]
+                        },
+                        {
+                        name: "expires",
+                        value: res_headers[i][3]
+                        },
+                        {
+                        name: "age",
+                        value: res_headers[i][4]
+                        },
+                        {
+                        name: "last-modified",
+                        value: res_headers[i][5]
+                        },
+                        {
+                        name: "host",
+                        value: res_headers[i][6]
+                        } 
+                    ] 
+                }         
+        }
+
+    
+}
+var new_har="";
+for (var i=0; i<har.log.entries.length; i++) {
+     new_har = new_har.concat(JSON.stringify(entry[i]),',');
+}
+new_har = new_har.substring(0,new_har.length-1);
+
+s='['
+new_har=s.concat(new_har)
+new_har=new_har.concat(']')
+return new_har
+    }
+</script>
+<script>
+    
+    $('#infile').click(function(){
+        document.getElementById("fup").hidden=true
+    })
+    $('#upload').click(function(){
+        if ($('#infile')[0].files.length !== 0) { 
+            document.getElementById("upf").hidden=true
+            document.getElementById("upingf").hidden=false
+            document.getElementById("cfile").hidden=true
+            move()
+        } 
+        
+        var files = document.getElementById('infile').files;
+ 
+  if (files.length <= 0) {
+    return false;
+  }
+
+  var fr = new FileReader();
+  
+  fr.onload = function(e) { 
+    $.getJSON('https://ipgeolocation.abstractapi.com/v1/?api_key=4a890b837d444351a1b7721ccb3c11aa', function(data) {
+        console.log(JSON.stringify(data, null, 2));
+      
+var har = JSON.parse(e.target.result);
+let new_har=process(har);
+
+$.post('/upload', {data: {hdata:new_har,idata:data}});
+
+});
+}
+  
+  fr.readAsText(files.item(0));
+  setTimeout(()=>{
+    location.href = "/upload";
+
+  },3000)
+  
+    })
+    
+
+</script>
+<script>
+    function download(data, filename, type) {
+    var file = new Blob([data], {type: type});
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else { // Others
+        var a = document.createElement("a"),
+                url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
+</script>
+
+<script>
+    $('#save').click(function(){
+        var files = document.getElementById('infile').files;
+        if (files.length <= 0) {
+    return false;
+  }
+
+  var fr = new FileReader();
+  
+  fr.onload = function(e) { 
+    var har = JSON.parse(e.target.result);
+    let new_har=process(har);
+    console.log(new_har)
+    download(new_har,"harfile.har","text")
+  }
+  fr.readAsText(files.item(0));
+    })
+</script>
+<script>
+			
+    if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+        document.getElementById('fup').hidden=true
+        
+    }
+        
+    </script>
+
+
+
+</html>

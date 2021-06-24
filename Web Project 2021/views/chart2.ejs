@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>  
+    <title>Web Inspector</title>
+
+    <style>
+        .nav-form {
+            background-color: #4d4d4d;
+            color:cornsilk;
+            padding: 30px 60px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .nav-form h4 {
+        text-align: center;
+        color: #4d4d4d;
+        font-size: 30px;
+        padding: 20px 0 20px 0;
+        }
+        .nav-form ul {
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+        .nav-form li {
+            list-style: none;
+            float:left;
+            padding:10px;
+        }
+        .nav-form li a {
+            color:cornsilk;
+            text-decoration:none;
+            font-weight:bold;
+            padding:5px 8px;
+            }
+        .nav-form li a:hover {
+            color: yellow; 
+            
+        }
+        .lead {
+            color:rgb(0, 0, 0);
+            font-weight:bold;
+        }
+        .info-form {
+            width: 300px;
+            font-family: Tahoma, Geneva, sans-serif;
+            text-align:center;
+            
+            }
+        .info-form h2 {
+            text-align: center;
+            color: #4d4d4d;
+            font-size: 25px;
+            padding: 20px 0 20px 0;
+            }
+        .info-form button {
+            color:rgb(31, 29, 28);
+            width: 100px;
+        }
+        h3 {
+            text-align: center;
+            margin-top: -30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-form">
+        <nav>
+          <h4 style=color:white>Web Inspector</h4>
+          <ul>
+              <li><a href="/Owner">Home</a></li>
+              <li><a href="/chart3">max-stale</a></li>
+              <li><a href="/chart4">cache</a></li>
+              <li><a href="/updateacc">Account</a></li>
+              <li><a>About us</a></li>
+              <li><a href="/Owner" >Back</a></li>
+              
+          </ul>
+        </nav>
+      </div>
+    <div class ="col-md-6 offset-md-3 ">
+     <div class= "card">
+        <div class="card-body">
+       
+            <h1>Chart 2</h1>
+            <p style="color:red" class="card-text">Select multiple values by pressing Ctrl</p>
+            <select multiple size = "7" id= "content_type">
+                <%for (var i in contypes) {%>
+                    <option value = <%i%> ><%=contypes[i]%></option>
+                <%}%>
+            </select>
+            <select multiple size = "7" id= "isp">
+                <%for (var i in disp) {%>
+                    <option value = <%i%> ><%=disp[i]%></option>
+                <%}%>
+            </select>
+            <button value = "select mutiple options" type="submit" onclick="var el = document.getElementsByTagName('select')[0];
+            var el1 = document.getElementsByTagName('select')[1];
+            (GetSelectedTextValue(el,el1));">Submit</button>
+        </div>
+        <div class = "card-body">
+            <canvas id="myChart2" ></canvas>
+        </div>
+     </div>
+    </div>
+</body>
+<script type = "text/javascript">
+    function GetSelectedTextValue(select,select1) {
+        
+        ctypes = []
+        ctypes1 = []
+
+        var options = select && select.options;
+        
+        var opt;
+        for(var i=0; i<options.length; i++) {
+            opt = options[i];
+            if(opt.selected) {
+                ctypes.push(opt.text);
+            }
+        }
+        var options1 = select1 && select1.options;
+        
+        var opt1;
+        for(var i=0; i<options1.length; i++) {
+            opt1 = options1[i];
+            if(opt1.selected) {
+                ctypes1.push(opt1.text);
+            }
+        }
+
+        
+        stypes=JSON.stringify(ctypes)
+        stypes1=JSON.stringify(ctypes1)
+        
+        
+        $.post('/chart2', {data: stypes, data1: stypes1}
+        );
+        setTimeout(()=>{
+            location.href = "/chart2";
+        
+          })
+        
+        
+    }
+</script>
+    <script type ="text/javascript">
+        var ttls = "<%=ttls%>"
+    
+    
+    
+    
+    ttls = ttls.replace(/&#34;/g,'"')
+    ttls = JSON.parse(ttls)
+    console.log(ttls)
+    count = []
+    
+    for(var i in ttls) {
+        count.push(ttls[i].count)
+    }
+    console.log(count)
+    max_age =[]
+    for(var j in ttls) {
+        max_age.push(ttls[j].max_age)
+    }
+    console.log(max_age)
+    max = Math.max(...max_age)
+    min = Math.min(...max_age)
+    
+    bucket = (max - min)/10
+    
+    var dynamicColors = function() {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+         
+        return "rgb(" + r + "," + g + "," + b + ")";
+     };
+     color = []
+     mydata = []
+     for(var i=0; i<=9; i++) {
+         mydata[i] = 0 
+        color.push(dynamicColors());
+     }
+     ranges = []
+     ranges[0] = {start:min, end:min + bucket}
+     for(var i=1; i<=9; i++) {
+
+        ranges[i] = {start: ranges[i-1].end, end: ranges[i-1].end + bucket}
+     }
+     ranges1=[]
+     for(var i in ranges) {
+         ranges1[i] = ranges[i].start + "-" + ranges[i].end
+     }
+     console.log(ranges)
+     
+    for(var i in ranges){
+        for(var j in ttls) {
+            if(parseInt(ttls[j].max_age)>=ranges[i].start && parseInt(ttls[j].max_age)<=ranges[i].end)
+            mydata[i] = mydata[i] + ttls[j].count
+        }
+    }
+    console.log(mydata)
+     
+   
+     
+     
+     
+
+     
+    </script>
+    <script>
+        console.log(ranges1+"hello")
+        console.log(max_age.length)
+       if(max_age.length==1){
+           ranges1.splice(ranges1.indexOf(ranges1[0]),9)
+           ranges1[0]=ranges1[0].split('-')[0]
+       }
+       console.log(ranges1)
+        var ctx = 'myChart2';
+    
+var myChart2 = new Chart(ctx, {
+type: 'bar',
+data: {
+    labels: ranges1,
+    datasets: [{
+        label: 'Frequency of TTL',
+        data: mydata,
+        barThickness: 60,
+        backgroundColor: color,
+        borderColor: color,
+        borderWidth: 1,
+        
+    }]
+},
+options: {
+    
+        xAxes: [{
+            scaleLabel: {
+              barPercentage:0.4,
+              display: true,
+              labelString: 'Hours'
+            }
+          }],
+        yAxes: [{
+            scaleLabel: {
+              beginAtZero: true,
+              display: true,
+              labelString: 'Average time wait'
+            }
+          }]
+    
+}
+
+});
+        
+        
+    </script>
+    <script>
+        
+    </script>
+
+</html>

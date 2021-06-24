@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8">  
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/style.css">
+        <title>Web Inspector</title>
+        <style>
+      .Update-username {
+				width: 300px;
+				margin: 0 auto;
+				font-family: Tahoma, Geneva, sans-serif;
+			}
+			.Update-username h1 {
+				text-align: center;
+				color: #4d4d4d;
+				font-size: 24px;
+				padding: 20px 0 20px 0;
+			}
+			.Update-username input[type="text"] {
+				width: 100%;
+				height:45px;
+				border: 1px solid #dddddd;
+				margin-bottom: 15px;
+			}
+			.Update-username button[type="submit"] {
+				width: 102%;
+				height:47px;
+				background-color: #4d4d4d;
+				border: 0;
+				cursor: pointer;
+				font-weight: bold;
+				color: #ffffff;
+			}
+            .nav-form {
+                background-color: #4d4d4d;
+                color:cornsilk;
+                padding: 20px 60px;
+                display: flex;
+                justify-content: space-between;
+            }
+            .nav-form h4 {
+			          text-align: center;
+			          color: #4d4d4d;
+			          font-size: 30px;
+                padding: 10px 65px 15px 0px;
+                margin-left: 100px;
+            }
+            .nav-form ul {
+                display:flex;
+                justify-content:center;
+                align-items:center;
+            }
+            .nav-form li {
+                list-style: none
+            }
+            .nav-form li a {
+                color:cornsilk;
+                text-decoration:none;
+                font-weight:bold;
+                padding:5px 8px;
+                }
+            .nav-form li a:hover {
+                color: yellow; 
+                text-decoration:none;
+            }
+            .lead {
+                color:rgb(0, 0, 0);
+                font-weight:bold;
+            }
+
+
+        </style>
+        
+    </head>
+
+    <body>
+      <div class="nav-form">
+        <nav>
+          <h4 style=color:white>Web Inspector</h4>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/updateacc">Account</a></li>
+          </ul>
+        </nav>
+      </div>
+		
+		<div class="Update-username">
+			<h1>Update Username</h1>
+      <form action="/updateus" method="POST">
+                <input type="text" name="oldusername" placeholder="Old Username" required> 
+                <input type="text" name="newusername" placeholder="New Username" required>
+                <button type="submit">Submit</button>
+                <p style=color:red>
+                <%if(uerror){%>
+                  <%="This is not your current username"%>
+                 <%}%>
+                 <%if(u1error){%>
+                  <%="This username doesn't exist"%>
+                 <%}%>
+                 <%if(u2error){%>
+                  <%="This username already exists"%>
+                 <%}%>
+                </p>
+                <p style=color:green>
+                  <%if(usuccess){%>
+                    <%="Username changed successfully!!!"%>
+                   <%}%>
+                </p>
+			</form>
+		</div>
+	     
+	</body>
